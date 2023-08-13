@@ -126,21 +126,38 @@ describe BinaryGame do
     # between the min & max integers) and one valid input number (as a string).
 
     # Remember that a stub can be called multiple times and return different values.
-    # https://rspec.info/features/3-12/rspec-mocks/configuring-responses/returning-a-value/
+    # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-mocks/docs/configuring-responses/returning-a-value
 
     context 'when user inputs an incorrect value once, then a valid input' do
       before do
+        invalid_input = 'x'
+        valid_input = '3'
+        allow(game_input).to receive(:gets).and_return(invalid_input, valid_input)
       end
 
-      xit 'completes loop and displays error message once' do
+      it 'completes loop and displays error message once' do
+        min = game_input.instance_variable_get(:@minimum)
+        max = game_input.instance_variable_get(:@maximum)
+        error_message = "Input error! Please enter a number between #{min} or #{max}."
+        expect(game_input).to receive(:puts).with(error_message).once
+        game_input.player_input(min, max)
       end
     end
 
     context 'when user inputs two incorrect values, then a valid input' do
       before do
+        invalid_input_1 = ''
+        invalid_input_2 = 'x'
+        valid_input = '3'
+        allow(game_input).to receive(:gets).and_return(invalid_input_1, invalid_input_2, valid_input)
       end
 
-      xit 'completes loop and displays error message twice' do
+      it 'completes loop and displays error message twice' do
+        min = game_input.instance_variable_get(:@minimum)
+        max = game_input.instance_variable_get(:@maximum)
+        error_message = "Input error! Please enter a number between #{min} or #{max}."
+        expect(game_input).to receive(:puts).with(error_message).twice
+        game_input.player_input(min, max)
       end
     end
   end
@@ -155,13 +172,23 @@ describe BinaryGame do
 
     # Note: #verify_input will only return a number if it is between?(min, max)
 
+    subject(:game_input) { described_class.new(1, 10) }
+
     context 'when given a valid input as argument' do
-      xit 'returns valid input' do
+      it 'returns valid input' do
+        min = 2
+        max = 7
+        input = 4
+        expect(game_input.verify_input(min, max, input)).to eq(input)
       end
     end
 
     context 'when given invalid input as argument' do
-      xit 'returns nil' do
+      it 'returns nil' do
+        min = 2
+        max = 7
+        input = 8
+        expect(game_input.verify_input(min, max, input)).to be_nil
       end
     end
   end
@@ -190,7 +217,7 @@ describe BinaryGame do
       # great tool to use when you're doing integration testing and need to make
       # sure that different classes work together in order to fulfill some bigger
       # computation.
-      # https://rspec.info/features/3-12/rspec-mocks/verifying-doubles/
+      # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-mocks/v/3-9/docs/verifying-doubles
 
       # You should not use verifying doubles for unit testings. Unit testing relies 
       # on using doubles to test the object in isolation (i.e., not dependent on any
@@ -213,7 +240,7 @@ describe BinaryGame do
       # and will need to return the new_number. We are going to match the
       # literal arguments, but there are many ways to specify the arguments
       # using matching arguments:
-      # https://rspec.info/features/3-12/rspec-mocks/setting-constraints/matching-arguments/
+      # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-mocks/docs/setting-constraints/matching-arguments
 
       before do
         allow(game_update).to receive(:puts)
@@ -253,7 +280,11 @@ describe BinaryGame do
 
     # Write a test for the following context.
     context 'when game minimum and maximum is 100 and 600' do
-      xit 'returns 9' do
+      subject(:game_100_600) { described_class.new(100, 600) }
+
+      it 'returns 9' do
+        max = game_100_600.maximum_guesses
+        expect(max).to eq(9)
       end
     end
   end
@@ -311,7 +342,13 @@ describe BinaryGame do
 
     # Write a test for the following context.
     context 'when game_over? is false five times' do
-      xit 'calls display_turn_order five times' do
+      before do
+        allow(search_display).to receive(:game_over?).and_return(false, false, false, false, false, true)
+      end
+
+      it 'calls display_turn_order five times' do
+        expect(game_display).to receive(:display_turn_order).with(search_display).exactly(5).times
+        game_display.display_binary_search(search_display)
       end
     end
   end
@@ -327,21 +364,31 @@ describe BinaryGame do
     #  by calling #display_guess.
 
     # Create a new subject and an instance_double for BinarySearch.
+    subject(:game_turn_order) { described_class.new(1, 10, guess_count = 3) }
+    let(:search_turn_order) { instance_double(BinarySearch) }
 
     before do
       # You'll need to create a few method stubs.
+      allow(search_turn_order).to receive(:make_guess)
+      allow(search_turn_order).to receive(:update_range)
+      allow(game_turn_order).to receive(:display_guess).with(search_turn_order)
     end
 
     # Command Method -> Test the change in the observable state
-    xit 'increases guess_count by one' do
+    it 'increases guess_count by one' do
+      expect { game_turn_order.display_turn_order(search_turn_order) }.to change { game_turn_order.instance_variable_get(:@guess_count) }.by(1)
     end
 
     # Method with Outgoing Command -> Test that a message is sent
-    xit 'sends make_guess' do
+    it 'sends make_guess' do
+      expect(search_turn_order).to receive(:make_guess).once
+      game_turn_order.display_turn_order(search_turn_order)
     end
 
     # Method with Outgoing Command -> Test that a message is sent
-    xit 'sends update_range' do
+    it 'sends update_range' do
+      expect(search_turn_order).to receive(:update_range).once
+      game_turn_order.display_turn_order(search_turn_order)
     end
 
     # Using method expectations can be confusing. Stubbing the methods above

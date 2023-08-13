@@ -48,10 +48,13 @@ describe NumberGame do
       # Write a similar test to the one above, that uses a custom matcher
       # instead of <, >, =.
       matcher :be_between_zero_and_nine do
+        match { |number| number.between?(0, 9) }
       end
 
       # remove the 'x' before running this test
-      xit 'is a number between 0 and 9' do
+      it 'is a number between 0 and 9' do
+        solution = game.solution
+        expect(solution).to be_between_zero_and_nine
       end
     end
   end
@@ -78,8 +81,10 @@ describe NumberGame do
     # Create a new instance of NumberGame and write a test for when the @guess
     # does not equal @solution.
     context 'when user guess is not correct' do
+      subject(:game_not_end) { described_class.new(3, '7') }
       # remove the 'x' before running this test
-      xit 'is not game over' do
+      it 'is not game over' do
+        expect(game_not_end).not_to be_game_over
       end
     end
   end
@@ -107,7 +112,10 @@ describe NumberGame do
 
     # Write a test for the following context.
     context 'when given invalid input as argument' do
-      xit 'returns nil' do
+      it 'returns nil' do
+        user_input = ''
+        verified_input = game_check.verify_input(user_input)
+        expect(verified_input).to be_nil
       end
     end
   end
@@ -117,7 +125,7 @@ describe NumberGame do
     # stub for #player_input to return a valid_input ('3'). To stub a method,
     # we 'allow' the test subject (game_loop) to receive the :method_name
     # and to return a specific value.
-    # https://rspec.info/features/3-12/rspec-mocks/basics/allowing-messages/
+    # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-mocks/v/2-14/docs/method-stubs/allow-with-a-simple-return-value
     # http://testing-for-beginners.rubymonstas.org/test_doubles.html
 
     subject(:game_loop) { described_class.new }
@@ -126,7 +134,7 @@ describe NumberGame do
       # To test the behavior, we want to test that the loop stops before the
       # puts 'Input error!' line. In order to test that this method is not
       # called, we use a message expectation.
-      # https://rspec.info/features/3-12/rspec-mocks/
+      # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-mocks/docs
 
       it 'stops loop and does not display error message' do
         valid_input = '3'
@@ -140,12 +148,12 @@ describe NumberGame do
     context 'when user inputs an incorrect value once, then a valid input' do
       # As the 'Arrange' step for tests grows, you can use a before hook to
       # separate the test from the set-up.
-      # https://rspec.info/features/3-12/rspec-core/hooks/before-and-after-hooks/
+      # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-core/v/2-0/docs/hooks/before-and-after-hooks\
       # https://www.tutorialspoint.com/rspec/rspec_hooks.htm
 
       before do
         # A method stub can be called multiple times and return different values.
-        # https://rspec.info/features/3-12/rspec-mocks/configuring-responses/returning-a-value/
+        # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-mocks/docs/configuring-responses/returning-a-value
         # This method stub for :player_input will return the invalid 'letter' input,
         # then it will return the 'valid_input'
         letter = 'd'
@@ -155,7 +163,7 @@ describe NumberGame do
 
       # When using message expectations, you can specify how many times you
       # expect the message to be received.
-      # https://rspec.info/features/3-12/rspec-mocks/setting-constraints/receive-counts/
+      # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-mocks/docs/setting-constraints/receive-counts
       it 'completes loop and displays error message once' do
         expect(game_loop).to receive(:puts).with('Input error!').once
         game_loop.player_turn
@@ -167,9 +175,15 @@ describe NumberGame do
     # Write a test for the following context.
     context 'when user inputs two incorrect values, then a valid input' do
       before do
+        false_input_1 = ''
+        false_input_2 = 'x'
+        valid_input = '7'
+        allow(game_loop).to receive(:player_input).and_return(false_input_1, false_input_2, valid_input)
       end
 
-      xit 'completes loop and displays error message twice' do
+      it 'completes loop and displays error message twice' do
+        expect(game_loop).to receive(:puts).with('Input error!').twice
+        game_loop.player_turn
       end
     end
   end
@@ -180,7 +194,7 @@ describe NumberGame do
   # applications' don't even output like this except to loggers.
 
   # However, here is an example of how to test 'puts' using the output matcher.
-  # https://rspec.info/features/3-12/rspec-expectations/built-in-matchers/output/
+  # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-expectations/docs/built-in-matchers/output-matcher
 
   describe '#final_message' do
     context 'when count is 1' do
@@ -200,10 +214,11 @@ describe NumberGame do
     # Create a new instance of NumberGame, with specific values for @solution,
     # @guess, and @count
     context 'when count is 2-3' do
+      subject(:game_one) { described_class.new(5, '5', 3) }
       # remove the 'x' before running this test
-      xit 'outputs correct phrase' do
+      it 'outputs correct phrase' do
         congrats_phrase = "Congratulations! You picked the random number in 3 guesses!\n"
-        expect { game.final_message }.to output(congrats_phrase).to_stdout
+        expect { game_one.final_message }.to output(congrats_phrase).to_stdout
       end
     end
 
@@ -211,8 +226,11 @@ describe NumberGame do
 
     # Write a test for the following context.
     context 'when count is 4 and over' do
+      subject(:game_two) { described_class.new(5, '5', 7) }
       # remove the 'x' before running this test
-      xit 'outputs correct phrase' do
+      it 'outputs correct phrase' do
+        congrats_phrase = "That was hard. It took you 7 guesses!\n"
+        expect { game_two.final_message }.to output(congrats_phrase).to_stdout
       end
     end
   end

@@ -3,7 +3,7 @@
 describe Array do
   # An implicitly defined 'subject' is available when the outermost example
   # group is a class. The 'subject' will be an instance of that class.
-  # https://rspec.info/features/3-12/rspec-core/subject/implicit-subject/
+  # https://web.archive.org/web/20221204015051/https://relishapp.com/rspec/rspec-core/v/3-9/docs/subject/implicitly-defined-subject
 
   # Note: Using an implicit subject is not recommended for most situations.
   # The next lesson will cover explicit subjects, which are recommended over
@@ -11,7 +11,7 @@ describe Array do
 
   context 'when subject is implicitly defined' do
     # Type matchers can use be_a or be_an to increase readability.
-    # https://rspec.info/features/3-12/rspec-expectations/built-in-matchers/types/
+    # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-expectations/v/3-9/docs/built-in-matchers/type-matchers
     it 'is an Array' do
       expect(subject).to be_an(Array)
     end
@@ -31,7 +31,7 @@ describe Array do
     end
     
     # RSpec can leverage this to create predicate matchers for any predicate method.
-    # https://rspec.info/features/3-12/rspec-expectations/built-in-matchers/predicates/
+    # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-expectations/docs/built-in-matchers/predicate-matchers
     it 'is empty' do
       expect(subject).to be_empty
     end
@@ -61,7 +61,7 @@ describe Array do
 
   # The answer is that each group runs its examples before running its nested
   # example groups, even if the nested groups are defined before the examples.
-  # https://rspec.info/features/3-12/rspec-core/command-line/order/
+  # https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-core/v/3-9/docs/command-line/order
 
   # Please note: one-line tests are only recommended when the matcher aligns
   # exactly with the doc string. Even in that case, many rubyists prefer
@@ -72,27 +72,29 @@ end
 describe Array do
   context 'when updating an implicit subject' do
     # remove the 'x' before running this test
-    xit 'is empty' do
-      # Write a test to expect the subject to be empty.
+    it 'is empty' do
+      expect(subject.empty?).to eq(true)
     end
 
     # remove the 'x' before running this test
-    xit 'updates length to 1' do
+    it 'updates length to 1' do
       # Update the implicit subject to make this test pass.
+      subject.append(0)
       expect(subject.length).to eq(1)
     end
   end
 
   context 'when using one let variable on two tests' do
     # Make a let variable that will pass both tests.
+    let(:lucky_numbers) { [13, 14, 15] }
 
     # remove the 'x' before running this test
-    xit 'has length of 3' do
+    it 'has length of 3' do
       expect(lucky_numbers.length).to eq(3)
     end
 
     # remove the 'x' before running this test
-    xit 'has sum of 42' do
+    it 'has sum of 42' do
       expect(lucky_numbers.sum).to eq(42)
     end
   end

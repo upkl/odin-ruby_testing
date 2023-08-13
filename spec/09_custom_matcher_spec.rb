@@ -2,7 +2,7 @@
 
 # If you need to test a condition that does not have a built-in matcher,
 # you can create your own.
-# https://rspec.info/features/3-12/rspec-expectations/custom-matchers/
+# https://web.archive.org/web/20230101143200/https://relishapp.com/rspec/rspec-expectations/v/3-9/docs/custom-matchers
 
 describe 'defining custom matchers' do
   context 'when reusing a matcher that is in scope' do
@@ -34,30 +34,34 @@ describe 'one word palindrome test' do
   let(:rotator) { 'rotator' }
   let(:palindrome) { 'palindrome' }
 
+  matcher :be_a_palindrome do
+    match { |word| word.reverse == word }
+  end
+
   # Write a custom matcher that detects a one word palindrome,
   # using the following block: { |word| word.reverse == word }
   # When it is set up correctly, all of the following tests will pass.
 
   context 'when a palindrome is used' do
     # remove the 'x' before running this test
-    xit 'is a palindrome' do
+    it 'is a palindrome' do
       expect(racecar).to be_a_palindrome
     end
 
     # remove the 'x' before running this test
-    xit 'is a palindrome' do
+    it 'is a palindrome' do
       expect(rotator).to be_a_palindrome
     end
   end
 
   context 'when a palindrome is not used' do
     # remove the 'x' before running this test
-    xit 'is not a palindrome' do
+    it 'is not a palindrome' do
       expect(spaceship).not_to be_a_palindrome
     end
 
     # remove the 'x' before running this test
-    xit 'is not a palindrome' do
+    it 'is not a palindrome' do
       expect(palindrome).not_to be_a_palindrome
     end
   end
